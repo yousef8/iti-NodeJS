@@ -17,7 +17,7 @@ switch (command) {
                 return;
             }
             const todoText = process.argv[3];
-            if (todoText === undefined) {
+            if (!todoText) {
                 console.log("[add] command needs only 1 additional argument which is todo title");
                 return;
             }
@@ -48,7 +48,7 @@ switch (command) {
             }
             let id = process.argv[3];
             let todoNewText = process.argv[4];
-            if (id === undefined && todoNewText === undefined) {
+            if (!id && !todoNewText) {
                 console.log("edit id newToDoText");
                 return;
             }
@@ -75,7 +75,7 @@ switch (command) {
                 return;
             }
             let id = process.argv[3];
-            if (id === undefined) {
+            if (!id) {
                 console.log("delete id");
                 return;
             }
@@ -110,7 +110,7 @@ function editToDo(id, newTodoText) {
     let todos = getTodos();
     let foundTodo = todos.find((todo) => todo.id === id);
 
-    if (foundTodo === undefined) {
+    if (!foundTodo) {
         console.log(`No todo with id [${id}] exists`);
         return;
     }
@@ -123,7 +123,7 @@ function deleteTodo(id) {
     let todos = getTodos();
 
     let foundTodo = todos.find((todo) => todo.id === id)
-    if (foundTodo === undefined) {
+    if (!foundTodo) {
         console.log(`Todo with id ${id} doesn't exist`);
         return;
     }
