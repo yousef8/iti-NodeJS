@@ -2,10 +2,16 @@ const fs = require('fs');
 const path = require('path');
 const todosFileName = 'todos.json';
 
+function Todo(id, text) {
+    return {
+        id,
+        text
+    }
+}
+
 function addTodo(text) {
     let todos = getTodos();
-    todos.push({ id: generateId(), text: text });
-
+    todos.push(new Todo(generateId(), text));
     writeTodosToFile(todos);
 }
 
