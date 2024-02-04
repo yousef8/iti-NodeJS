@@ -1,0 +1,26 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "CLI todo app",
+  "main": "todo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yousef8/iti-NodeJS.git#main"
+  },
+  "keywords": [
+    "todo",
+    "todo-app"
+  ],
+  "author": "Yousef Elsayed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yousef8/iti-NodeJS/issues"
+  },
+  "homepage": "https://github.com/yousef8/iti-NodeJS/tree/main#readme",
+  "dependencies": {
+    "commander": "^12.0.0"
+  }
+}

@@ -1,97 +1,48 @@
 const fs = require('fs');
 const path = require('path');
+const commander = require('commander');
+
 const todosFileName = 'todos.json';
+const program = new commander.Command();
 
-if (process.argv.length < 3) {
-    console.log("Invalid: todo command [options]");
-    return;
+function parseArgAsString(value, prvValue) {
+    let trimmedValue = value.trim();
+    if (!trimmedValue) {
+        throw new commander.InvalidArgumentError('Todo Cannot be empty');
+    }
+
+    return trimmedValue;
 }
 
-const command = process.argv[2];
-
-switch (command) {
-    case "add":
-        {
-            if (process.argv.length > 4) {
-                console.log("[add] command only take 1 argument [Todo text]");
-                return;
-            }
-            const todoText = process.argv[3];
-            if (!todoText) {
-                console.log("[add] command needs only 1 additional argument which is todo title");
-                return;
-            }
-
-            if (!todoText.trim()) {
-                console.log("todo cannot be empty");
-                return;
-            }
-            addTodo(todoText);
-            break;
-
-        }
-    case "list":
-        {
-            if (process.argv.length > 3) {
-                console.log("[list] command doesn't take any arguments");
-                return;
-            }
-            listTodos();
-            break;
-        }
-
-    case "edit":
-        {
-            if (process.argv.length > 5) {
-                console.log("[edit] command takes 2 arguments [id newText]");
-                return;
-            }
-            let id = process.argv[3];
-            let todoNewText = process.argv[4];
-            if (!id && !todoNewText) {
-                console.log("edit id newToDoText");
-                return;
-            }
-
-            id = parseInt(id);
-            if (Number.isNaN(id)) {
-                console.log(`id argument must be a number`);
-                return;
-            }
-
-            if (!todoNewText.trim()) {
-                console.log("todo cannot be empty");
-                return;
-            }
-
-            editToDo(id, todoNewText);
-            break;
-        }
-
-    case "delete":
-        {
-            if (process.argv.length > 4) {
-                console.log("[delete] command only takes 1 argument which is [id]")
-                return;
-            }
-            let id = process.argv[3];
-            if (!id) {
-                console.log("delete id");
-                return;
-            }
-            id = parseInt(id);
-            if (Number.isNaN(id)) {
-                console.log(`id argument must be a number`);
-                return;
-            }
-            deleteTodo(id);
-            break;
-        }
-
-    default:
-        console.log("Not Supported Command");
-        break;
+function parseArgAsInt(arg, prvArg) {
+    const parsedArg = parseInt(arg);
+    if (isNaN(parsedArg)) {
+        throw new commander.InvalidArgumentError('Not a number.');
+    }
+    return parsedArg;
 }
+
+program.command('add')
+    .description("Add ToDo item")
+    .argument("<string>", "Todo text to add", parseArgAsString)
+    .action(addTodo);
+
+program.command('list')
+    .description("List ToDo list")
+    .action(() => listTodos());
+
+program.command('edit')
+    .description("Edit a ToDo")
+    .argument('<id>', 'ID of ToDo to edit', parseArgAsInt)
+    .argument('<string>', 'Updated ToDo text', parseArgAsString)
+    .action(editToDo);
+
+program.command('delete')
+    .description("Delete an existing ToDo")
+    .argument('<id>', 'ID of ToDo to delete', parseArgAsInt)
+    .action(deleteTodo);
+
+program.parse();
 
 function addTodo(text) {
     let todos = getTodos();
