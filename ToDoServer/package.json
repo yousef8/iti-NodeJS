@@ -4,6 +4,7 @@
   "description": "Server For ToDo app",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon --inspect .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +23,10 @@
   "homepage": "https://github.com/yousef8/iti-NodeJS#readme",
   "dependencies": {
     "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "nodemon": "^3.0.3"
   }
 }
