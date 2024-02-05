@@ -1,25 +1,25 @@
 {
-  "name": "todo",
+  "name": "todoserver",
   "version": "1.0.0",
-  "description": "CLI todo app",
-  "main": "todo.js",
+  "description": "Server For ToDo app",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yousef8/iti-NodeJS.git#main"
+    "url": "git+https://github.com/yousef8/iti-NodeJS.git"
   },
   "keywords": [
-    "todo",
-    "todo-app"
+    "ToDo-Server",
+    "ToDo-Website"
   ],
   "author": "Yousef Elsayed",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/yousef8/iti-NodeJS/issues"
   },
-  "homepage": "https://github.com/yousef8/iti-NodeJS/tree/main#readme",
+  "homepage": "https://github.com/yousef8/iti-NodeJS#readme",
   "dependencies": {
     "commander": "^12.0.0"
   }
