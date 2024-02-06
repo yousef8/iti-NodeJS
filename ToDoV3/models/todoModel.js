@@ -11,7 +11,6 @@ function Todo(id, text) {
 }
 
 function getTodos() {
-  console.log('Model getTodos()');
   const isTodosExist = fs.existsSync(path.join(__dirname, todosFileName));
   if (!isTodosExist) {
     console.log('file does not exist');
@@ -30,7 +29,7 @@ function generateId() {
 }
 
 function writeTodosToFile(newTodos) {
-  fs.writeFileSync(todosFileName, JSON.stringify(newTodos));
+  fs.writeFileSync(path.join(__dirname, todosFileName), JSON.stringify(newTodos));
 }
 
 function getTodo(id) {

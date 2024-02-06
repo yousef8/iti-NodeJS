@@ -5,8 +5,9 @@ const app = express();
 const port = process.env.PORT || 4200;
 
 app.use(express.static('public'));
-
 app.use(express.json());
+
+app.set('view engine', 'ejs');
 
 app.use(router);
 

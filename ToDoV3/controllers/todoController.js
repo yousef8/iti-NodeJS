@@ -1,7 +1,6 @@
 const model = require('../models/todoModel');
 
 function getTodos() {
-  console.log('controller getTodos()');
   return model.getTodos();
 }
 

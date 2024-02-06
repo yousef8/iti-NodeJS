@@ -23,4 +23,8 @@ router.patch('/todos/:id', (req, res) => {
   res.json(editToDo(req.params.id, req.body.text));
 });
 
+router.get('/', (req, res) => {
+  res.render('index', { todos: getTodos() });
+});
+
 module.exports = router;
