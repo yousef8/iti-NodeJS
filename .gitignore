@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # Project Specific
-*.json
+todos.json
