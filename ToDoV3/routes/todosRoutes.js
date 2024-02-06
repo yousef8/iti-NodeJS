@@ -12,15 +12,35 @@ router.get('/todos/:id', (req, res) => {
 });
 
 router.post('/todos', (req, res) => {
-  res.json(addTodo(req.body.text));
+  const addedTodo = addTodo(req.body.text);
+  if (!addedTodo) {
+    res.status(400);
+    res.end();
+  }
+
+  res.status(201);
+  res.json(addedTodo);
 });
 
 router.delete('/todos/:id', (req, res) => {
-  res.json(deleteTodo(req.params.id));
+  const deletedTodo = deleteTodo(req.params.id);
+  if (!deletedTodo) {
+    res.status(404);
+    res.end();
+  }
+
+  res.json(deletedTodo);
 });
 
 router.patch('/todos/:id', (req, res) => {
-  res.json(editTodo(req.params.id, req.body.text));
+  const editedTodo = editTodo(req.params.id, req.body.text);
+
+  if (!editedTodo) {
+    res.status(404);
+    res.end();
+  }
+  res.status(201);
+  res.json(editedTodo);
 });
 
 router.get('/', (req, res) => {
