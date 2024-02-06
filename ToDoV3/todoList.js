@@ -31,6 +31,11 @@ function writeTodosToFile(newTodos) {
   fs.writeFileSync(todosFileName, JSON.stringify(newTodos));
 }
 
+function getTodo(id) {
+  const todos = getTodos();
+  return todos.find((todo) => todo.id === id);
+}
+
 function addTodo(text) {
   const todos = getTodos();
   todos.push(new Todo(generateId(), text));
@@ -69,5 +74,5 @@ function deleteTodo(id) {
 }
 
 module.exports = {
-  addTodo, listTodos, editToDo, deleteTodo,
+  addTodo, listTodos, editToDo, deleteTodo, getTodos, getTodo,
 };
