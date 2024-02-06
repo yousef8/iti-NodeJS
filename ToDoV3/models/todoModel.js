@@ -4,10 +4,8 @@ const path = require('path');
 const todosFileName = 'todos.json';
 
 function Todo(id, text) {
-  return {
-    id,
-    text,
-  };
+  this.id = id;
+  this.text = text;
 }
 
 function getTodos() {
