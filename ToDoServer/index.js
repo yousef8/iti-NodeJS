@@ -3,6 +3,13 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
+  if (req.url === '/style.css') {
+    res.setHeader('content-type', 'text/css');
+    const styleStream = fs.createReadStream(path.join(__dirname, 'style.css'), 'utf-8');
+    styleStream.pipe(res);
+    return styleStream.on('end', () => res.end());
+  }
+
   if (req.url === '/' && req.method === 'GET') {
     res.setHeader('content-type', 'text/html');
 
@@ -10,18 +17,14 @@ const server = http.createServer((req, res) => {
       res.write('<body><h1>Empty ToDo List</h1></body>');
       return res.end();
     }
+    res.write('<!DOCTYPE html>');
+    res.write('<head><link rel="stylesheet" href="/style.css" type="text/css"></head>');
 
     const todosStream = fs.createReadStream(path.join(__dirname, 'todos.json'), 'utf-8');
-    const styleStream = fs.createReadStream(path.join(__dirname, 'style.css'), 'utf-8');
 
     let todos = '';
     todosStream.on('data', (chunk) => {
       todos += chunk;
-    });
-
-    let style = '';
-    styleStream.on('data', (chunk) => {
-      style += chunk;
     });
 
     return todosStream.on('end', () => {
@@ -31,19 +34,21 @@ const server = http.createServer((req, res) => {
         res.write(`<li>${todo.text}</li>`);
       });
       res.write('</ul>');
-      return styleStream.on('end', () => {
-        res.write(`<style>${style}</style></body>`);
-        return res.end();
-      });
+      return res.end();
     });
   }
 
   if (req.url === '/astronomy' && req.method === 'GET') {
-    const imgSrc = 'https://media.cnn.com/api/v1/images/stellar/prod/200505225212-04-fossils-and-climate-change-museum.jpg?q=x_0,y_0,h_1125,w_1999,c_fill/h_720,w_1280';
     res.setHeader('content-type', 'text/html');
-    res.write(`<body><div><img src="${imgSrc}"></div></body>`);
+    res.write('<body><div><img src="/hitanValley.jpg"></div></body>');
     res.write('<p>Wati El Hitan, known as the Valley of Whales, is home to the unique Fossils and Climate Change Museum</p>');
     return res.end();
+  }
+
+  if (req.url === '/hitanValley.jpg' && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'image/jpg' });
+    const imgStream = fs.readFileSync(path.join(__dirname, 'assets', 'hitanValley.jpg'));
+    res.write(imgStream);
   }
 
   res.write('<h1>404 : Page Not Found</h1>');
