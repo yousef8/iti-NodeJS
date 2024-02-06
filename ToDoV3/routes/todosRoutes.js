@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {
-  addTodo, getTodos, getTodo, deleteTodo, editToDo,
+  addTodo, getTodos, getTodo, deleteTodo, editTodo,
 } = require('../controllers/todoController');
 
 router.get('/todos', (req, res) => {
@@ -20,7 +20,7 @@ router.delete('/todos/:id', (req, res) => {
 });
 
 router.patch('/todos/:id', (req, res) => {
-  res.json(editToDo(req.params.id, req.body.text));
+  res.json(editTodo(req.params.id, req.body.text));
 });
 
 router.get('/', (req, res) => {

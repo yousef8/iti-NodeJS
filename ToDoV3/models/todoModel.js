@@ -13,7 +13,6 @@ function Todo(id, text) {
 function getTodos() {
   const isTodosExist = fs.existsSync(path.join(__dirname, todosFileName));
   if (!isTodosExist) {
-    console.log('file does not exist');
     fs.writeFileSync(path.join(__dirname, todosFileName), '[]');
   }
 
@@ -38,34 +37,47 @@ function getTodo(id) {
 }
 
 function addTodo(text) {
-  const todos = getTodos();
-  todos.push(new Todo(generateId(), text));
-  writeTodosToFile(todos);
+  try {
+    const todos = getTodos();
+    const todo = new Todo(generateId(), text);
+    todos.push(todo);
+    writeTodosToFile(todos);
+    return todo;
+  } catch (err) {
+    return undefined;
+  }
 }
 
 function editToDo(id, newTodoText) {
-  const todos = getTodos();
-  const foundTodo = todos.find((todo) => todo.id === id);
+  try {
+    const todos = getTodos();
+    const foundTodo = todos.find((todo) => todo.id === id);
 
-  if (!foundTodo) {
-    console.log(`No todo with id [${id}] exists`);
-    return;
+    if (!foundTodo) {
+      return undefined;
+    }
+
+    foundTodo.text = newTodoText;
+    writeTodosToFile(todos);
+    return foundTodo;
+  } catch (err) {
+    return undefined;
   }
-
-  foundTodo.text = newTodoText;
-  writeTodosToFile(todos);
 }
 
 function deleteTodo(id) {
-  let todos = getTodos();
-
-  const foundTodo = todos.find((todo) => todo.id === id);
-  if (!foundTodo) {
-    console.log(`Todo with id ${id} doesn't exist`);
-    return;
+  try {
+    let todos = getTodos();
+    const foundTodo = todos.find((todo) => todo.id === id);
+    if (!foundTodo) {
+      return undefined;
+    }
+    todos = todos.filter((todo) => todo.id !== id);
+    writeTodosToFile(todos);
+    return foundTodo;
+  } catch (err) {
+    return undefined;
   }
-  todos = todos.filter((todo) => todo.id !== id);
-  writeTodosToFile(todos);
 }
 
 module.exports = {

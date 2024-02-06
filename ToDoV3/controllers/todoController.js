@@ -9,18 +9,15 @@ function getTodo(id) {
 }
 
 function addTodo(text) {
-  model.addTodo(text);
-  return model.getTodos();
+  return model.addTodo(text);
 }
 
 function editTodo(id, text) {
-  model.editToDo(parseInt(id, 10), text);
-  return getTodos();
+  return model.editToDo(parseInt(id, 10), text);
 }
 
 function deleteTodo(id) {
-  model.deleteTodo(parseInt(id, 10));
-  return getTodos();
+  return model.deleteTodo(parseInt(id, 10));
 }
 
 module.exports = {
