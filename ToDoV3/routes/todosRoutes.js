@@ -1,30 +1,26 @@
 const router = require('express').Router();
 const {
   addTodo, getTodos, getTodo, deleteTodo, editToDo,
-} = require('../todoList');
+} = require('../controllers/todoController');
 
 router.get('/todos', (req, res) => {
-  const todos = getTodos();
-  res.json(todos);
+  res.json(getTodos());
 });
 
 router.get('/todos/:id', (req, res) => {
-  res.json(getTodo(parseInt(req.params.id, 10)));
+  res.json(getTodo(req.params.id));
 });
 
 router.post('/todos', (req, res) => {
-  addTodo(req.body.text);
-  res.json(getTodos());
+  res.json(addTodo(req.body.text));
 });
 
 router.delete('/todos/:id', (req, res) => {
-  deleteTodo(parseInt(req.params.id, 10));
-  res.json(getTodos());
+  res.json(deleteTodo(req.params.id));
 });
 
 router.patch('/todos/:id', (req, res) => {
-  editToDo(parseInt(req.params.id, 10), req.body.text);
-  res.json(getTodos());
+  res.json(editToDo(req.params.id, req.body.text));
 });
 
 module.exports = router;

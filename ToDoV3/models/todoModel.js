@@ -11,9 +11,11 @@ function Todo(id, text) {
 }
 
 function getTodos() {
+  console.log('Model getTodos()');
   const isTodosExist = fs.existsSync(path.join(__dirname, todosFileName));
   if (!isTodosExist) {
-    fs.writeFileSync(todosFileName, '[]');
+    console.log('file does not exist');
+    fs.writeFileSync(path.join(__dirname, todosFileName), '[]');
   }
 
   return JSON.parse(fs.readFileSync(path.join(__dirname, todosFileName), 'utf-8'));
@@ -42,12 +44,6 @@ function addTodo(text) {
   writeTodosToFile(todos);
 }
 
-function listTodos() {
-  getTodos().forEach((todo) => {
-    console.log(`[${todo.id}] ${todo.text}`);
-  });
-}
-
 function editToDo(id, newTodoText) {
   const todos = getTodos();
   const foundTodo = todos.find((todo) => todo.id === id);
@@ -74,5 +70,5 @@ function deleteTodo(id) {
 }
 
 module.exports = {
-  addTodo, listTodos, editToDo, deleteTodo, getTodos, getTodo,
+  addTodo, editToDo, deleteTodo, getTodos, getTodo,
 };
