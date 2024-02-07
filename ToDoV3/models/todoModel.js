@@ -1,83 +1,90 @@
 const fs = require('fs');
 const path = require('path');
 
-const todosFileName = 'todos.json';
-
-function Todo(id, text) {
-  this.id = id;
-  this.text = text;
+class Todo {
+  constructor(id, text) {
+    this.id = id;
+    this.text = text;
+  }
 }
 
-function getTodos() {
-  const isTodosExist = fs.existsSync(path.join(__dirname, todosFileName));
-  if (!isTodosExist) {
-    fs.writeFileSync(path.join(__dirname, todosFileName), '[]');
+class Todos {
+  #fileName;
+  #filePath;
+  #todos;
+  #nextId;
+
+  constructor() {
+    this.#fileName = 'todos.json';
+    this.#filePath = path.join(__dirname, this.#fileName);
+
+    const isTodosExist = fs.existsSync(this.#filePath);
+    if (!isTodosExist) {
+      fs.writeFileSync(this.#filePath,  '[]');
+    }
+
+    this.#todos = JSON.parse(fs.readFileSync(this.#filePath, 'utf-8'));
+    this.#nextId = this.#todos.length ? this.#todos.at(-1).id + 1 : 1;
   }
 
-  return JSON.parse(fs.readFileSync(path.join(__dirname, todosFileName), 'utf-8'));
-}
-
-function generateId() {
-  const todos = getTodos();
-  if (todos.length < 1) {
-    return 1;
+  #writeToFile() {
+    fs.writeFileSync(this.#filePath, JSON.stringify(this.#todos));
   }
-  return todos[todos.length - 1].id + 1;
-}
 
-function writeTodosToFile(newTodos) {
-  fs.writeFileSync(path.join(__dirname, todosFileName), JSON.stringify(newTodos));
-}
+  #generateId(){
+    return this.#nextId++;
+  }
 
-function getTodo(id) {
-  const todos = getTodos();
-  return todos.find((todo) => todo.id === id);
-}
+  getTodos() {
+    return this.#todos;
+  }
 
-function addTodo(text) {
+  getTodo(id) {
+    return this.#todos.find((todo) => todo.id === id);
+  }
+
+  addTodo(text) {
+    try {
+      const todo = new Todo(this.#generateId(), text);
+      this.#todos.push(todo);
+      this.#writeToFile();
+      return todo;
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  editToDo(id, newTodoText) {
   try {
-    const todos = getTodos();
-    const todo = new Todo(generateId(), text);
-    todos.push(todo);
-    writeTodosToFile(todos);
-    return todo;
-  } catch (err) {
-    return undefined;
-  }
-}
-
-function editToDo(id, newTodoText) {
-  try {
-    const todos = getTodos();
-    const foundTodo = todos.find((todo) => todo.id === id);
+    const foundTodo = this.#todos.find((todo) => todo.id === id);
 
     if (!foundTodo) {
       return undefined;
     }
 
     foundTodo.text = newTodoText;
-    writeTodosToFile(todos);
+    this.#writeToFile();
+    console.log(foundTodo);
     return foundTodo;
   } catch (err) {
     return undefined;
   }
 }
 
-function deleteTodo(id) {
+deleteTodo(id) {
   try {
-    let todos = getTodos();
-    const foundTodo = todos.find((todo) => todo.id === id);
-    if (!foundTodo) {
+    const delTodo = this.#todos.find((todo) => todo.id === id)
+    if(!delTodo){
       return undefined;
     }
-    todos = todos.filter((todo) => todo.id !== id);
-    writeTodosToFile(todos);
-    return foundTodo;
+    this.#todos = this.#todos.filter((todo) => todo.id !== id);
+    this.#writeToFile();
+    return delTodo;
   } catch (err) {
     return undefined;
   }
 }
+}
 
-module.exports = {
-  addTodo, editToDo, deleteTodo, getTodos, getTodo,
-};
+
+module.exports = { Todos };

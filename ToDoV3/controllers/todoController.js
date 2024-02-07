@@ -1,4 +1,6 @@
-const model = require('../models/todoModel');
+const { Todos } = require('../models/todoModel');
+
+const todos = new Todos();
 
 function isValidString(value) {
   const trimmedValue = value.trim();
@@ -18,19 +20,19 @@ function isValidInt(arg) {
 }
 
 function getTodos() {
-  return model.getTodos();
+  return todos.getTodos();
 }
 
 function getTodo(id) {
   if (isValidInt(id)) {
-    return model.getTodo(parseInt(id, 10));
+    return todos.getTodo(parseInt(id, 10));
   }
   return undefined;
 }
 
 function addTodo(text) {
   if (isValidString(text)) {
-    return model.addTodo(text);
+    return todos.addTodo(text);
   }
 
   return undefined;
@@ -38,14 +40,14 @@ function addTodo(text) {
 
 function editTodo(id, text) {
   if (isValidInt(id) && isValidString(text)) {
-    return model.editToDo(parseInt(id, 10), text);
+    return todos.editToDo(parseInt(id, 10), text);
   }
 
   return undefined;
 }
 
 function deleteTodo(id) {
-  return model.deleteTodo(parseInt(id, 10));
+  return todos.deleteTodo(parseInt(id, 10));
 }
 
 module.exports = {
