@@ -1,5 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const DBCreateError = require('../errors/DBErrors/DBCreateError');
+const DBRecordNotFoundError = require('../errors/DBErrors/DBRecordNotFoundError');
+const DBWriteError = require('../errors/DBErrors/DBWriteError');
 
 class Todo {
   constructor(id, text) {
@@ -18,12 +21,17 @@ class Todos {
     this.#fileName = 'todos.json';
     this.#filePath = path.join(__dirname, this.#fileName);
 
+    try{
     const isTodosExist = fs.existsSync(this.#filePath);
     if (!isTodosExist) {
       fs.writeFileSync(this.#filePath,  '[]');
     }
 
     this.#todos = JSON.parse(fs.readFileSync(this.#filePath, 'utf-8'));
+    }catch(err){
+      throw new DBCreateError();
+    }
+
     this.#nextId = this.#todos.length ? this.#todos.at(-1).id + 1 : 1;
   }
 
@@ -40,18 +48,26 @@ class Todos {
   }
 
   getTodo(id) {
-    return this.#todos.find((todo) => todo.id === id);
+    let foundTodo = this.#todos.find((todo) => todo.id === id);
+    if(!foundTodo){
+      throw new DBRecordNotFoundError(`couldn't find record with id [${id}]`);
+    }
+
+    return {...foundTodo};
   }
 
   addTodo(text) {
+    const todo = new Todo(this.#generateId(), text);
+    this.#todos.push(todo);
+
     try {
-      const todo = new Todo(this.#generateId(), text);
-      this.#todos.push(todo);
       this.#writeToFile();
-      return todo;
     } catch (err) {
-      return undefined;
+      this.#todos.pop();
+      throw new DBWriteError();
     }
+
+    return {...todo};
   }
 
   editToDo(id, newTodoText) {

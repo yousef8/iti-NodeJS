@@ -2,20 +2,58 @@ const router = require('express').Router();
 const {
   addTodo, getTodos, getTodo, deleteTodo, editTodo,
 } = require('../controllers/todoController');
+const DBRecordNotFoundError = require('../errors/DBErrors/DBRecordNotFoundError');
+const DBWriteError = require('../errors/DBErrors/DBWriteError');
 
 router.get('/todos', (req, res) => {
   res.json(getTodos());
 });
 
 router.get('/todos/:id', (req, res) => {
-  res.json(getTodo(req.params.id));
+  let foundTodo;
+  try {
+    foundTodo = getTodo(req.params.id);
+  } catch (err) {
+    if (err instanceof DBRecordNotFoundError) {
+      res.status(404);
+      res.end();
+      return;
+    }
+
+    console.log(err.name);
+    console.log(err.message);
+    console.log(err.stack);
+    process.exit(1);
+  }
+
+  if (!foundTodo) {
+    res.status(400);
+    res.end();
+    return;
+  }
+  res.json(foundTodo);
 });
 
 router.post('/todos', (req, res) => {
-  const addedTodo = addTodo(req.body.text);
+  let addedTodo;
+  try {
+    addedTodo = addTodo(req.body.text);
+  } catch (err) {
+    if (err instanceof DBWriteError) {
+      res.status(500);
+      res.end();
+      return;
+    }
+
+    console.log(err.name);
+    console.log(err.message);
+    console.log(err.stack);
+    process.exit(1);
+  }
   if (!addedTodo) {
     res.status(400);
     res.end();
+    return;
   }
 
   res.status(201);

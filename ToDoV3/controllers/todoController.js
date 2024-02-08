@@ -1,3 +1,5 @@
+const DBRecordNotFoundError = require('../errors/DBErrors/DBRecordNotFoundError');
+const DBWriteError = require('../errors/DBErrors/DBWriteError');
 const { Todos } = require('../models/todoModel');
 
 const todos = new Todos();
@@ -24,18 +26,43 @@ function getTodos() {
 }
 
 function getTodo(id) {
-  if (isValidInt(id)) {
-    return todos.getTodo(parseInt(id, 10));
+  if (!isValidInt(id)) {
+    return undefined;
   }
-  return undefined;
+
+  let foundTodo;
+  try {
+    foundTodo = todos.getTodo(parseInt(id, 10));
+  } catch (err) {
+    if (err instanceof DBRecordNotFoundError) {
+      throw err;
+    }
+    console.log(err.name);
+    console.log(err.message);
+    process.exit(1);
+  }
+
+  return foundTodo;
 }
 
 function addTodo(text) {
-  if (isValidString(text)) {
-    return todos.addTodo(text);
+  if (!isValidString(text)) {
+    return undefined;
   }
 
-  return undefined;
+  let addedTodo;
+  try {
+    addedTodo = todos.addTodo(text);
+  } catch (err) {
+    if (err instanceof DBWriteError) {
+      throw err;
+    }
+    console.log(err.name);
+    console.log(err.message);
+    process.exit(1);
+  }
+
+  return addedTodo;
 }
 
 function editTodo(id, text) {
