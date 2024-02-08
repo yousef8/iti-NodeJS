@@ -66,14 +66,17 @@ function addTodo(text) {
 }
 
 function editTodo(id, text) {
-  if (isValidInt(id) && isValidString(text)) {
-    return todos.editToDo(parseInt(id, 10), text);
+  if (!(isValidInt(id) && isValidString(text))) {
+    return undefined;
   }
-
-  return undefined;
+  return todos.editToDo(parseInt(id, 10), text);
 }
 
 function deleteTodo(id) {
+  if (!isValidInt(id)) {
+    return undefined;
+  }
+
   return todos.deleteTodo(parseInt(id, 10));
 }
 

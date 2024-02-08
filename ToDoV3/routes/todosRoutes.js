@@ -22,7 +22,6 @@ router.get('/todos/:id', (req, res) => {
 
     console.log(err.name);
     console.log(err.message);
-    console.log(err.stack);
     process.exit(1);
   }
 
@@ -44,11 +43,6 @@ router.post('/todos', (req, res) => {
       res.end();
       return;
     }
-
-    console.log(err.name);
-    console.log(err.message);
-    console.log(err.stack);
-    process.exit(1);
   }
   if (!addedTodo) {
     res.status(400);
@@ -61,22 +55,54 @@ router.post('/todos', (req, res) => {
 });
 
 router.delete('/todos/:id', (req, res) => {
-  const deletedTodo = deleteTodo(req.params.id);
-  if (!deletedTodo) {
-    res.status(404);
+  try {
+    const deletedTodo = deleteTodo(req.params.id);
+    if (!deletedTodo) {
+      res.status(400);
+      res.end();
+      return;
+    }
+
+    res.json(deletedTodo);
+  } catch (err) {
+    if (err instanceof DBRecordNotFoundError) {
+      res.status(404);
+      res.end();
+      return;
+    }
+    console.log(err.name);
+    console.log(err.message);
+
+    res.status(500);
     res.end();
   }
-
-  res.json(deletedTodo);
 });
 
 router.patch('/todos/:id', (req, res) => {
-  const editedTodo = editTodo(req.params.id, req.body.text);
+  let editedTodo;
+
+  try {
+    editedTodo = editTodo(req.params.id, req.body.text);
+  } catch (err) {
+    if (err instanceof DBRecordNotFoundError) {
+      res.status(404);
+      res.end();
+      return;
+    }
+
+    console.log(err.name);
+    console.log(err.message);
+    res.status(500);
+    res.end();
+    return;
+  }
 
   if (!editedTodo) {
-    res.status(404);
+    res.status(400);
     res.end();
+    return;
   }
+
   res.status(201);
   res.json(editedTodo);
 });

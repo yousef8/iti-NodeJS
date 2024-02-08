@@ -71,34 +71,41 @@ class Todos {
   }
 
   editToDo(id, newTodoText) {
-  try {
     const foundTodo = this.#todos.find((todo) => todo.id === id);
 
     if (!foundTodo) {
-      return undefined;
+      throw new DBRecordNotFoundError(`record with id [${id}]`);
     }
 
+    let oldText = foundTodo.text;
     foundTodo.text = newTodoText;
+
+    try{
     this.#writeToFile();
-    console.log(foundTodo);
-    return foundTodo;
-  } catch (err) {
-    return undefined;
-  }
+    }catch (err){
+      foundTodo.text = oldText; // Restore old state
+      throw new DBWriteError();
+    }
+
+    return {...foundTodo};
 }
 
 deleteTodo(id) {
-  try {
-    const delTodo = this.#todos.find((todo) => todo.id === id)
-    if(!delTodo){
-      return undefined;
-    }
-    this.#todos = this.#todos.filter((todo) => todo.id !== id);
-    this.#writeToFile();
-    return delTodo;
-  } catch (err) {
-    return undefined;
+  const delTodo = this.#todos.find((todo) => todo.id === id)
+
+  if(!delTodo){
+    throw new DBRecordNotFoundError(`couldn't find record with id [${id}]`);
   }
+  this.#todos = this.#todos.filter((todo) => todo.id !== id);
+
+  try{
+  this.#writeToFile();
+  }catch(err){
+    this.#todos.push(delTodo);
+    throw new DBWriteError();
+  }
+
+  return {...delTodo};
 }
 }
 
