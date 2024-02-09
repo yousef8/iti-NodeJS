@@ -131,3 +131,6 @@ dist
 
 # Project Specific
 todos.json
+
+# VScode
+.vscode
