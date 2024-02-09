@@ -110,4 +110,4 @@ deleteTodo(id) {
 }
 
 
-module.exports = { Todos };
+module.exports = new Todos();

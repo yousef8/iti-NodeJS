@@ -1,5 +1,6 @@
 const express = require('express');
-const router = require('./routes/todosRoutes');
+const todosRouter = require('./routes/todos');
+const viewsRouter = require('./routes/views');
 
 const app = express();
 const port = process.env.PORT || 4200;
@@ -9,8 +10,10 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 
-app.use(router);
+app.use(todosRouter);
+
+app.use(viewsRouter);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
