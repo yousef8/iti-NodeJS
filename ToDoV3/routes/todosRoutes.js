@@ -2,21 +2,16 @@ const router = require('express').Router();
 const {
   addTodo, getTodos, getTodo, deleteTodo, editTodo,
 } = require('../controllers/todoController');
+const { parseId } = require('../middlewares/middlewares');
 const DBRecordNotFoundError = require('../errors/DBErrors/DBRecordNotFoundError');
 
 router.get('/todos', (req, res) => {
   res.json(getTodos());
 });
 
-router.get('/todos/:id', (req, res) => {
+router.get('/todos/:id', parseId, (req, res) => {
   try {
-    const foundTodo = getTodo(req.params.id);
-    if (!foundTodo) {
-      res.status(400);
-      res.end();
-      return;
-    }
-    res.json(foundTodo);
+    res.json(getTodo(req.params.id));
   } catch (err) {
     if (err instanceof DBRecordNotFoundError) {
       res.status(404);
@@ -51,16 +46,9 @@ router.post('/todos', (req, res) => {
   }
 });
 
-router.delete('/todos/:id', (req, res) => {
+router.delete('/todos/:id', parseId, (req, res) => {
   try {
-    const deletedTodo = deleteTodo(req.params.id);
-    if (!deletedTodo) {
-      res.status(400);
-      res.end();
-      return;
-    }
-
-    res.json(deletedTodo);
+    res.json(deleteTodo(req.params.id));
   } catch (err) {
     if (err instanceof DBRecordNotFoundError) {
       res.status(404);
@@ -75,7 +63,7 @@ router.delete('/todos/:id', (req, res) => {
   }
 });
 
-router.patch('/todos/:id', (req, res) => {
+router.patch('/todos/:id', parseId, (req, res) => {
   try {
     const editedTodo = editTodo(req.params.id, req.body.text);
 

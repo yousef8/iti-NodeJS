@@ -11,24 +11,12 @@ function isValidString(value) {
   return true;
 }
 
-function isValidInt(arg) {
-  const parsedArg = parseInt(arg, 10);
-  if (Number.isNaN(parsedArg)) {
-    return false;
-  }
-  return true;
-}
-
 function getTodos() {
   return todos.getTodos();
 }
 
 function getTodo(id) {
-  if (!isValidInt(id)) {
-    return undefined;
-  }
-
-  return todos.getTodo(parseInt(id, 10));
+  return todos.getTodo(id);
 }
 
 function addTodo(text) {
@@ -40,18 +28,14 @@ function addTodo(text) {
 }
 
 function editTodo(id, text) {
-  if (!(isValidInt(id) && isValidString(text))) {
+  if (!isValidString(text)) {
     return undefined;
   }
-  return todos.editToDo(parseInt(id, 10), text);
+  return todos.editToDo(id, text);
 }
 
 function deleteTodo(id) {
-  if (!isValidInt(id)) {
-    return undefined;
-  }
-
-  return todos.deleteTodo(parseInt(id, 10));
+  return todos.deleteTodo(id);
 }
 
 module.exports = {
