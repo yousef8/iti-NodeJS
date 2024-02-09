@@ -20,15 +20,19 @@ class Todos {
   constructor() {
     this.#fileName = 'todos.json';
     this.#filePath = path.join(__dirname, this.#fileName);
+    this.#todos = [];
 
     try{
     const isTodosExist = fs.existsSync(this.#filePath);
     if (!isTodosExist) {
-      fs.writeFileSync(this.#filePath,  '[]');
+      this.#writeToFile()
     }
 
     this.#todos = JSON.parse(fs.readFileSync(this.#filePath, 'utf-8'));
     }catch(err){
+      console.log(err.name);
+      console.log(err.message);
+      console.log(err.stack);
       throw new DBCreateError();
     }
 
@@ -36,7 +40,14 @@ class Todos {
   }
 
   #writeToFile() {
+    try{
     fs.writeFileSync(this.#filePath, JSON.stringify(this.#todos));
+    } catch(err){
+      console.log(err.name);
+      console.log(err.message);
+      console.log(err.stack);
+      throw new DBWriteError()
+    }
   }
 
   #generateId(){
@@ -64,7 +75,7 @@ class Todos {
       this.#writeToFile();
     } catch (err) {
       this.#todos.pop();
-      throw new DBWriteError();
+      throw err;
     }
 
     return {...todo};
@@ -84,7 +95,7 @@ class Todos {
     this.#writeToFile();
     }catch (err){
       foundTodo.text = oldText; // Restore old state
-      throw new DBWriteError();
+      throw err;
     }
 
     return {...foundTodo};
@@ -102,7 +113,7 @@ deleteTodo(id) {
   this.#writeToFile();
   }catch(err){
     this.#todos.push(delTodo);
-    throw new DBWriteError();
+    throw err;
   }
 
   return {...delTodo};
