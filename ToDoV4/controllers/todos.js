@@ -32,7 +32,7 @@ exports.addTodo = async function addTodo(req, res) {
     }
 
     res.status(201);
-    res.json(await Todos.create({ title: req.body.title })).isSelected({ _id: 0, __v: 0 });
+    res.json(await Todos.create({ title: req.body.title }));
   } catch (err) {
     console.log(err.name);
     console.log(err.message);

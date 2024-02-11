@@ -2,7 +2,7 @@ const MyError = require('../MyError');
 
 class ValidationError extends MyError {
   constructor(message) {
-    super(`${message}`);
+    super(`${message}`, 422);
   }
 }
 
