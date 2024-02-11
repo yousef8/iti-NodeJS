@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const counterSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -8,7 +9,7 @@ const counterSchema = new mongoose.Schema({
 const Counter = mongoose.model('usersCounter', counterSchema);
 
 const usersSchema = new mongoose.Schema({
-  id: Number,
+  _id: Number,
   username: {
     type: String,
     required: true,
@@ -42,7 +43,9 @@ const usersSchema = new mongoose.Schema({
 
 usersSchema.pre('save', async function preSaveHook() {
   const counter = await Counter.findOneAndUpdate({ name: 'usersCounter' }, { $inc: { seq: 1 } }, { upsert: true, new: true }).exec();
-  this.id = counter.seq;
+  this._id = counter.seq;
+
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 const Users = mongoose.model('users', usersSchema);

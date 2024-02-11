@@ -8,7 +8,7 @@ const counterSchema = new mongoose.Schema({
 const Counter = mongoose.model('counter', counterSchema);
 
 const todosSchema = new mongoose.Schema({
-  id: {
+  _id: {
     type: Number,
   },
   title: {
@@ -33,7 +33,7 @@ const todosSchema = new mongoose.Schema({
 
 todosSchema.pre('save', async function preSaveHook() {
   const counter = await Counter.findOneAndUpdate({ name: 'todoCounter' }, { $inc: { seq: 1 } }, { upsert: true, new: true }).exec();
-  this.id = counter.seq;
+  this._id = counter.seq;
 });
 
 const Todos = mongoose.model('Todos', todosSchema);
