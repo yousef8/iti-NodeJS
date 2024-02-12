@@ -10,7 +10,7 @@ exports.getTodos = async function getTodos(req, res) {
 
 exports.getTodo = async function getTodo(req, res) {
   try {
-    const foundTodo = await Todos.findOne({ id: req.params.id }).exec();
+    const foundTodo = await Todos.findOne({ _id: req.params.id }).exec();
     if (!foundTodo) {
       res.status(404);
       res.end();
@@ -41,8 +41,7 @@ exports.addTodo = async function addTodo(req, res, next) {
   if (err) {
     return next(new ValidationError(err.message));
   }
-  res.status(201);
-  res.json(todo);
+  return res.status(201).json(todo);
 };
 
 exports.editTodo = async function editTodo(req, res, next) {
@@ -66,7 +65,7 @@ exports.editTodo = async function editTodo(req, res, next) {
 
 exports.deleteTodo = async function deleteTodo(req, res) {
   try {
-    const deleteRes = await Todos.deleteOne({ id: req.params.id });
+    const deleteRes = await Todos.deleteOne({ _id: req.params.id });
     if (!deleteRes.deletedCount) {
       res.sendStatus(404);
     }
