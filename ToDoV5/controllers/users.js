@@ -6,8 +6,6 @@ const MyError = require('../errors/MyError');
 const MissingRequiredFieldError = require('../errors/InputValidationErrors/MissingRequiredFieldError');
 const ValidationError = require('../errors/InputValidationErrors/ValidationError');
 
-const secret = 'verySecretSecret';
-
 async function register(req, res, next) {
   const {
     firstName, lastName, username, password,
@@ -111,7 +109,7 @@ async function login(req, res, next) {
     return next(new MyError('Not Authorized', 401));
   }
 
-  const token = jwt.sign({ userId: user._id }, secret, {
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
     expiresIn: '1d',
   });
 
