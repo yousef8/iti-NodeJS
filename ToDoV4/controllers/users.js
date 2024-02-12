@@ -9,7 +9,7 @@ async function createUser(req, res, next) {
   const {
     firstName, lastName, username, password,
   } = req.body;
-
+  // use (joi || express-validator) for better scheme validation npm package
   if (!(firstName && lastName && username && password)) {
     return next(new MissingRequiredFieldError('Mandatory fields [firstName lastName username password] must exist and cannot be empty', 422));
   }
@@ -26,7 +26,7 @@ async function createUser(req, res, next) {
 }
 
 async function getUsers(req, res, next) {
-  const [err, users] = await asyncWrapper(Users.find({}, { firstName: true }).exec());
+  const [err, users] = await asyncWrapper(Users.find({}).exec());
 
   if (err) {
     return next(new MyError(err.message, 500));
@@ -57,7 +57,7 @@ async function editUser(req, res, next) {
     return next(new MissingRequiredFieldError('At least One of these fields [firstName lastName username password] must exist and cannot be empty'));
   }
 
-  const [err, queryRes] = await asyncWrapper(Users.findOneAndUpdate({ id: req.params.id }, {
+  const [err, queryRes] = await asyncWrapper(Users.findOneAndUpdate({ _id: req.params.id }, {
     firstName, lastName, username, password,
   }, { returnDocument: 'after' }).select({ _id: false, __v: false }).exec());
 
