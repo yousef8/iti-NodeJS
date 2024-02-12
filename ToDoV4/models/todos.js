@@ -34,7 +34,15 @@ const todosSchema = new mongoose.Schema({
     ref: 'users',
     required: true,
   },
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  toJSON: {
+    transform: (doc, ret) => {
+      ret.__v = undefined;
+      return ret;
+    },
+  },
+});
 
 todosSchema.pre('save', async function preSaveHook() {
   const counter = await Counter.findOneAndUpdate({ name: 'todoCounter' }, { $inc: { seq: 1 } }, { upsert: true, new: true }).exec();

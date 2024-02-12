@@ -14,9 +14,9 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 
-app.use(usersRouter);
 app.use(todosRouter);
 app.use(viewsRouter);
+app.use(usersRouter);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({ error: err.message });

@@ -1,7 +1,9 @@
 const Users = require('../models/users');
+const Todos = require('../models/todos');
 const asyncWrapper = require('../lib/async-wrapper');
 const MyError = require('../errors/MyError');
 const MissingRequiredFieldError = require('../errors/InputValidationErrors/MissingRequiredFieldError');
+const ValidationError = require('../errors/InputValidationErrors/ValidationError');
 
 async function createUser(req, res, next) {
   const {
@@ -24,7 +26,7 @@ async function createUser(req, res, next) {
 }
 
 async function getUsers(req, res, next) {
-  const [err, users] = await asyncWrapper(Users.find({}, { id: true, firstName: true, _id: false }).exec());
+  const [err, users] = await asyncWrapper(Users.find({}, { firstName: true }).exec());
 
   if (err) {
     return next(new MyError(err.message, 500));
@@ -65,6 +67,16 @@ async function editUser(req, res, next) {
 
   return res.json(queryRes);
 }
+
+async function getTodos(req, res, next) {
+  const [err, todos] = await asyncWrapper(Todos.find({ userId: parseInt(req.params.id, 10) }).populate('userId'));
+
+  if (err) {
+    return next(new ValidationError(err.message));
+  }
+
+  return res.json(todos);
+}
 module.exports = {
-  createUser, getUsers, deleteUser, editUser,
+  createUser, getUsers, deleteUser, editUser, getTodos,
 };

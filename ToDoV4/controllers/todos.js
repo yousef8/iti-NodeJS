@@ -4,13 +4,13 @@ const ValidationError = require('../errors/InputValidationErrors/ValidationError
 const MissingRequiredFieldError = require('../errors/InputValidationErrors/MissingRequiredFieldError');
 
 exports.getTodos = async function getTodos(req, res) {
-  const todos = await Todos.find({}, { __v: 0 }).exec();
+  const todos = await Todos.find({}).exec();
   res.json(todos);
 };
 
 exports.getTodo = async function getTodo(req, res) {
   try {
-    const foundTodo = await Todos.findOne({ id: req.params.id }, { __v: false }).exec();
+    const foundTodo = await Todos.findOne({ id: req.params.id }).exec();
     if (!foundTodo) {
       res.status(404);
       res.end();
@@ -55,7 +55,7 @@ exports.editTodo = async function editTodo(req, res, next) {
     return next(new ValidationError('tags cannot be empty'));
   }
 
-  const [err, todo] = await asyncWrapper(Todos.findOneAndUpdate({ _id: req.params.id }, { title, status, tags }, { returnDocument: 'after' }).select({ __v: false }));
+  const [err, todo] = await asyncWrapper(Todos.findOneAndUpdate({ _id: req.params.id }, { title, status, tags }, { returnDocument: 'after' }));
 
   if (err) {
     return next(new ValidationError(err.message));
