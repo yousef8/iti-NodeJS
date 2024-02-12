@@ -1,0 +1,36 @@
+{
+  "name": "todov4",
+  "version": "1.0.0",
+  "description": "Todo app server using Express.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yousef8/iti-NodeJS.git"
+  },
+  "keywords": [
+    "todo",
+    "express.js"
+  ],
+  "author": "Yousef Elsayed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yousef8/iti-NodeJS/issues"
+  },
+  "homepage": "https://github.com/yousef8/iti-NodeJS#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "nodemon": "^3.0.3"
+  }
+}
