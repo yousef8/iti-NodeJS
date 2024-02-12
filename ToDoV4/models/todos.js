@@ -20,7 +20,7 @@ const todosSchema = new mongoose.Schema({
   status: {
     type: String,
     required: false,
-    enum: ['to-do', 'in progress', 'done'],
+    enum: ['to-do', 'in-progress', 'done'],
     default: 'to-do',
   },
 
@@ -28,6 +28,11 @@ const todosSchema = new mongoose.Schema({
     type: [String],
     required: false,
     max: 10,
+  },
+  userId: {
+    type: Number,
+    ref: 'users',
+    required: true,
   },
 }, { timestamps: true });
 

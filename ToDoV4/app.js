@@ -19,7 +19,6 @@ app.use(todosRouter);
 app.use(viewsRouter);
 
 app.use((err, req, res, next) => {
-  console.log('Entered Error Handling');
   res.status(err.status).json({ error: err.message });
 });
 

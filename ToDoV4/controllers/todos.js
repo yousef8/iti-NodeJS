@@ -1,14 +1,16 @@
 const Todos = require('../models/todos');
-const DBRecordNotFoundError = require('../errors/DBErrors/DBRecordNotFoundError');
+const asyncWrapper = require('../lib/async-wrapper');
+const ValidationError = require('../errors/InputValidationErrors/ValidationError');
+const MissingRequiredFieldError = require('../errors/InputValidationErrors/MissingRequiredFieldError');
 
 exports.getTodos = async function getTodos(req, res) {
-  const todos = await Todos.find({}, { _id: 0, __v: 0 }).exec();
+  const todos = await Todos.find({}, { __v: 0 }).exec();
   res.json(todos);
 };
 
 exports.getTodo = async function getTodo(req, res) {
   try {
-    const foundTodo = await Todos.findOne({ id: req.params.id }, { _id: 0, __v: 0 }).exec();
+    const foundTodo = await Todos.findOne({ id: req.params.id }, { __v: false }).exec();
     if (!foundTodo) {
       res.status(404);
       res.end();
@@ -23,45 +25,43 @@ exports.getTodo = async function getTodo(req, res) {
   }
 };
 
-exports.addTodo = async function addTodo(req, res) {
-  try {
-    if (!req.body.title) {
-      res.status(400);
-      res.json({ msg: 'Title field is mandatory and cannot be empty' });
-      return;
-    }
+exports.addTodo = async function addTodo(req, res, next) {
+  const {
+    title, status, userId, tags,
+  } = req.body;
 
-    res.status(201);
-    res.json(await Todos.create({ title: req.body.title }));
-  } catch (err) {
-    console.log(err.name);
-    console.log(err.message);
-    res.status(500);
-    res.end();
+  if (!title.trim()) {
+    return next(new MissingRequiredFieldError('title cannot be missing or empty'));
   }
+
+  const [err, todo] = await asyncWrapper(Todos.create({
+    title, status, userId, tags,
+  }));
+
+  if (err) {
+    return next(new ValidationError(err.message));
+  }
+  res.status(201);
+  res.json(todo);
 };
 
-exports.editTodo = async function editTodo(req, res) {
-  try {
-    if (!req.body.title) {
-      res.status(400);
-      res.json({ msg: 'Title field is mandatory and cannot be empty' });
-      return;
-    }
-
-    res.json(await Todos.findOneAndUpdate({ id: req.params.id }, { title: req.body.title }, { returnDocument: 'after' }).select({ _id: 0, __v: 0 }));
-  } catch (err) {
-    if (err instanceof DBRecordNotFoundError) {
-      res.status(404);
-      res.end();
-      return;
-    }
-
-    console.log(err.name);
-    console.log(err.message);
-    res.status(500);
-    res.end();
+exports.editTodo = async function editTodo(req, res, next) {
+  const { title, status, tags } = req.body;
+  if (title && !title.trim()) {
+    return next(new ValidationError('title cannot be empty'));
   }
+
+  if (tags && !tags.trim()) {
+    return next(new ValidationError('tags cannot be empty'));
+  }
+
+  const [err, todo] = await asyncWrapper(Todos.findOneAndUpdate({ _id: req.params.id }, { title, status, tags }, { returnDocument: 'after' }).select({ __v: false }));
+
+  if (err) {
+    return next(new ValidationError(err.message));
+  }
+
+  return res.json(todo);
 };
 
 exports.deleteTodo = async function deleteTodo(req, res) {
