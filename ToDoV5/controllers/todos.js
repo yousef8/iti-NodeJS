@@ -5,7 +5,19 @@ const ValidationError = require('../errors/InputValidationErrors/ValidationError
 const MissingRequiredFieldError = require('../errors/InputValidationErrors/MissingRequiredFieldError');
 
 exports.getTodos = async function getTodos(req, res) {
-  const todos = await Todos.find({ userId: req.userId }).exec();
+  const { limit, skip, status } = req.query;
+  const todos = await Todos.aggregate([
+    {
+      $match: { userId: req.userId, status: status || 'to-do' },
+    },
+    {
+      $limit: parseInt(limit, 10) || 100,
+    },
+    {
+      $skip: parseInt(skip, 10) || 0,
+    },
+  ]).exec();
+
   res.json(todos);
 };
 
