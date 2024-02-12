@@ -8,7 +8,7 @@ const ValidationError = require('../errors/InputValidationErrors/ValidationError
 
 const secret = 'verySecretSecret';
 
-async function createUser(req, res, next) {
+async function register(req, res, next) {
   const {
     firstName, lastName, username, password,
   } = req.body;
@@ -29,7 +29,7 @@ async function createUser(req, res, next) {
 }
 
 async function getUsers(req, res, next) {
-  const [err, users] = await asyncWrapper(Users.find({}).exec());
+  const [err, users] = await asyncWrapper(Users.find({ _id: req.userId }).exec());
 
   if (err) {
     return next(new MyError(err.message, 500));
@@ -39,7 +39,11 @@ async function getUsers(req, res, next) {
 }
 
 async function deleteUser(req, res, next) {
-  const [err, queryRes] = await asyncWrapper(Users.deleteOne({ id: req.params.id }).exec());
+  if (req.params.id !== req.userId) {
+    return next(new MyError('Not Authorized', 401));
+  }
+
+  const [err, queryRes] = await asyncWrapper(Users.deleteOne({ _id: req.userId }).exec());
   if (err) {
     return next(new MyError(err.message, 400));
   }
@@ -52,6 +56,10 @@ async function deleteUser(req, res, next) {
 }
 
 async function editUser(req, res, next) {
+  if (req.params.id !== req.userId) {
+    return next(new MyError('Not Authorized', 401));
+  }
+
   const {
     firstName, lastName, username, password,
   } = req.body;
@@ -60,19 +68,28 @@ async function editUser(req, res, next) {
     return next(new MissingRequiredFieldError('At least One of these fields [firstName lastName username password] must exist and cannot be empty'));
   }
 
-  const [err, queryRes] = await asyncWrapper(Users.findOneAndUpdate({ _id: req.params.id }, {
-    firstName, lastName, username, password,
-  }, { returnDocument: 'after' }).exec());
+  const [err, user] = await asyncWrapper(Users.findOne({ _id: req.userId }).exec());
 
   if (err) {
-    return next(new MyError(err.message, 400));
+    return next(new MyError(err.message, 500));
   }
 
-  return res.json(queryRes);
+  if (firstName) user.firstName = firstName;
+  if (lastName) user.lastName = lastName;
+  if (username) user.username = username;
+  if (password) user.password = password;
+
+  const updatedUser = await asyncWrapper(user.save());
+
+  return res.json(updatedUser);
 }
 
-async function getTodos(req, res, next) {
-  const [err, todos] = await asyncWrapper(Todos.find({ userId: parseInt(req.params.id, 10) }).populate('userId'));
+async function getUserTodos(req, res, next) {
+  if (req.userId !== req.params.id) {
+    return next(new MyError('Not Authorized', 401));
+  }
+
+  const [err, todos] = await asyncWrapper(Todos.find({ userId: req.userId }).populate('userId'));
 
   if (err) {
     return next(new ValidationError(err.message));
@@ -101,5 +118,5 @@ async function login(req, res, next) {
   return res.json({ token });
 }
 module.exports = {
-  createUser, getUsers, deleteUser, editUser, getTodos, login,
+  register, getUsers, deleteUser, editUser, getUserTodos, login,
 };

@@ -42,10 +42,20 @@ const usersSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 usersSchema.pre('save', async function preSaveHook() {
-  const counter = await Counter.findOneAndUpdate({ name: 'usersCounter' }, { $inc: { seq: 1 } }, { upsert: true, new: true }).exec();
-  this._id = counter.seq;
+  console.log('save hook triggered');
+  if (this.isNew) {
+    console.log('creating new user');
+    const counter = await Counter.findOneAndUpdate({ name: 'usersCounter' }, { $inc: { seq: 1 } }, { upsert: true, new: true }).exec();
+    this._id = counter.seq;
 
-  this.password = await bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
+    return;
+  }
+
+  if (this.isModified('password')) {
+    console.log('password changed');
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 });
 
 usersSchema.methods.verifyPassword = async function verifyPassword(password) {
