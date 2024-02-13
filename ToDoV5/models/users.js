@@ -39,7 +39,17 @@ const usersSchema = new mongoose.Schema({
     required: true,
     min: 8,
   },
-}, { timestamps: true });
+}, {
+  timestamps: true,
+
+  toJSON: {
+    transform: (doc, ret) => {
+      delete ret.__v;
+      delete ret.password;
+      return ret;
+    },
+  },
+});
 
 usersSchema.pre('save', async function preSaveHook() {
   console.log('save hook triggered');
