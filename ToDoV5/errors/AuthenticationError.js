@@ -2,7 +2,7 @@ const MyError = require('./MyError');
 
 class AuthenticationError extends MyError {
   constructor() {
-    super('Not Authorized', 401);
+    super('Failed Authentication', 401);
   }
 }
 
