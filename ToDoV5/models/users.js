@@ -59,7 +59,7 @@ usersSchema.pre('save', async function preSaveHook() {
 });
 
 usersSchema.methods.verifyPassword = async function verifyPassword(password) {
-  const valid = await bcrypt.compare(password, this.password);
+  const valid = await bcrypt.compare(password.toString(), this.password);
   return valid;
 };
 
