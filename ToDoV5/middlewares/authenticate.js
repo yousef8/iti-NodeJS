@@ -1,22 +1,22 @@
 const jwt = require('jsonwebtoken');
-const MyError = require('../errors/MyError');
+const AuthenticationError = require('../errors/AuthenticationError');
 
 async function authenticate(req, res, next) {
   const token = req.header('authorization');
-  if (!token) return next(new MyError('Not Auhtorized', 401));
+  if (!token) return next(new AuthenticationError());
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
     if (!payload.userId) {
-      return next(new MyError('Not Authorized', 401));
+      return next(new AuthenticationError());
     }
 
     req.userId = payload.userId;
     return next();
   } catch (error) {
     console.log('token is right');
-    return next(new MyError('Not Auhtorized', 401));
+    return next(new AuthenticationError());
   }
 }
 

@@ -5,6 +5,7 @@ const asyncWrapper = require('../lib/async-wrapper');
 const MyError = require('../errors/MyError');
 const MissingRequiredFieldError = require('../errors/InputValidationErrors/MissingRequiredFieldError');
 const ValidationError = require('../errors/InputValidationErrors/ValidationError');
+const AutenticationError = require('../errors/AuthenticationError');
 
 async function register(req, res, next) {
   const {
@@ -42,7 +43,7 @@ async function getUsers(req, res, next) {
 
 async function deleteUser(req, res, next) {
   if (req.params.id !== req.userId) {
-    return next(new MyError('Not Authorized', 401));
+    return next(new AutenticationError());
   }
 
   const [err, queryRes] = await asyncWrapper(Users.deleteOne({ _id: req.userId }).exec());
@@ -59,7 +60,7 @@ async function deleteUser(req, res, next) {
 
 async function editUser(req, res, next) {
   if (req.params.id !== req.userId) {
-    return next(new MyError('Not Authorized', 401));
+    return next(new AutenticationError());
   }
 
   const {
@@ -92,7 +93,7 @@ async function editUser(req, res, next) {
 
 async function getUserTodos(req, res, next) {
   if (req.userId !== req.params.id) {
-    return next(new MyError('Not Authorized', 401));
+    return next(new AutenticationError());
   }
 
   const [err, todos] = await asyncWrapper(Todos.find({ userId: req.userId }).populate('userId'));
@@ -114,7 +115,7 @@ async function login(req, res, next) {
   const valid = await user.verifyPassword(password);
 
   if (!valid) {
-    return next(new MyError('Not Authorized', 401));
+    return next(new AutenticationError());
   }
 
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
@@ -123,6 +124,7 @@ async function login(req, res, next) {
 
   return res.json({ token });
 }
+
 module.exports = {
   register, getUsers, deleteUser, editUser, getUserTodos, login,
 };
