@@ -81,7 +81,11 @@ async function editUser(req, res, next) {
   if (username) user.username = username;
   if (password) user.password = password.toString();
 
-  const updatedUser = await asyncWrapper(user.save());
+  const [error, updatedUser] = await asyncWrapper(user.save());
+
+  if (error) {
+    return next(new MyError('Internal Error', 500));
+  }
 
   return res.json(updatedUser);
 }
