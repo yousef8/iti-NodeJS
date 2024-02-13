@@ -42,10 +42,6 @@ async function getUsers(req, res, next) {
 }
 
 async function deleteUser(req, res, next) {
-  if (req.params.id !== req.userId) {
-    return next(new AutenticationError());
-  }
-
   const [err, queryRes] = await asyncWrapper(Users.deleteOne({ _id: req.userId }).exec());
   if (err) {
     return next(new MyError(err.message, 400));
@@ -59,10 +55,6 @@ async function deleteUser(req, res, next) {
 }
 
 async function editUser(req, res, next) {
-  if (req.params.id !== req.userId) {
-    return next(new AutenticationError());
-  }
-
   const {
     firstName, lastName, username, password,
   } = req.body;
@@ -92,10 +84,6 @@ async function editUser(req, res, next) {
 }
 
 async function getUserTodos(req, res, next) {
-  if (req.userId !== req.params.id) {
-    return next(new AutenticationError());
-  }
-
   const [err, todos] = await asyncWrapper(Todos.find({ userId: req.userId }).populate('userId'));
 
   if (err) {
