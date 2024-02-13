@@ -110,7 +110,7 @@ async function login(req, res, next) {
     expiresIn: '1d',
   });
 
-  return res.json({ token });
+  return res.json({ user, token });
 }
 
 module.exports = {
