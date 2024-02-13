@@ -44,7 +44,7 @@ exports.addTodo = async function addTodo(req, res, next) {
   } = req.body;
 
   if (!title.trim()) {
-    return next(new MissingRequiredFieldError('title cannot be missing or empty'));
+    return next(new MissingRequiredFieldError('title'));
   }
 
   const [err, todo] = await asyncWrapper(Todos.create({

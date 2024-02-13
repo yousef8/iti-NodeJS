@@ -12,7 +12,7 @@ async function register(req, res, next) {
   } = req.body;
 
   if (!(firstName && lastName && username && password)) {
-    return next(new MissingRequiredFieldError('Mandatory fields [firstName lastName username password] must exist and cannot be empty', 422));
+    return next(new MissingRequiredFieldError('firstName lastName username password'));
   }
 
   const [err, user] = await asyncWrapper(Users.create({
@@ -63,7 +63,7 @@ async function editUser(req, res, next) {
   } = req.body;
 
   if (!(firstName || lastName || username || password)) {
-    return next(new MissingRequiredFieldError('At least One of these fields [firstName lastName username password] must exist and cannot be empty'));
+    return next(new MissingRequiredFieldError('firstName lastName username password'));
   }
 
   const [err, user] = await asyncWrapper(Users.findOne({ _id: req.userId }).exec());
@@ -99,7 +99,7 @@ async function getUserTodos(req, res, next) {
 async function login(req, res, next) {
   const { username, password } = req.body;
   if (!(username && password)) {
-    return next(new MissingRequiredFieldError('[username && password] are required'));
+    return next(new MissingRequiredFieldError('username && password'));
   }
 
   const user = await Users.findOne({ username }).exec();
