@@ -1,16 +1,16 @@
 const router = require('express').Router();
 const todosCtrler = require('../controllers/todos');
-const getUserFromToken = require('../middlewares/getUserFromToken');
+const authenticate = require('../middlewares/authenticate');
 const parseId = require('../middlewares/parseId');
 
-router.get('/todos', getUserFromToken, todosCtrler.getTodos);
+router.get('/todos', authenticate, todosCtrler.getTodos);
 
-router.get('/todos/:id', getUserFromToken, parseId, todosCtrler.getTodo);
+router.get('/todos/:id', authenticate, parseId, todosCtrler.getTodo);
 
-router.post('/todos', getUserFromToken, todosCtrler.addTodo);
+router.post('/todos', authenticate, todosCtrler.addTodo);
 
-router.patch('/todos/:id', getUserFromToken, parseId, todosCtrler.editTodo);
+router.patch('/todos/:id', authenticate, parseId, todosCtrler.editTodo);
 
-router.delete('/todos/:id', getUserFromToken, parseId, todosCtrler.deleteTodo);
+router.delete('/todos/:id', authenticate, parseId, todosCtrler.deleteTodo);
 
 module.exports = router;

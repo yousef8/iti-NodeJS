@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const MyError = require('../errors/MyError');
 
-function getUserFromToken(req, res, next) {
+function authenticate(req, res, next) {
   const token = req.header('authorization');
   if (!token) return next(new MyError('Not Auhtorized', 401));
   try {
@@ -14,4 +14,4 @@ function getUserFromToken(req, res, next) {
   }
 }
 
-module.exports = getUserFromToken;
+module.exports = authenticate;

@@ -1,18 +1,18 @@
 const router = require('express').Router();
 const usersCtrler = require('../controllers/users');
 const parseId = require('../middlewares/parseId');
-const getUserFromToken = require('../middlewares/getUserFromToken');
+const authenticate = require('../middlewares/authenticate');
 
-router.get('/users', getUserFromToken, usersCtrler.getUsers);
+router.get('/users', authenticate, usersCtrler.getUsers);
 
 router.post('/users/login', usersCtrler.login);
 
-router.get('/users/:id/todos', getUserFromToken, parseId, usersCtrler.getUserTodos);
+router.get('/users/:id/todos', authenticate, parseId, usersCtrler.getUserTodos);
 
 router.post('/users', usersCtrler.register);
 
-router.patch('/users/:id', getUserFromToken, parseId, usersCtrler.editUser);
+router.patch('/users/:id', authenticate, parseId, usersCtrler.editUser);
 
-router.delete('/users/:id', getUserFromToken, parseId, usersCtrler.deleteUser);
+router.delete('/users/:id', authenticate, parseId, usersCtrler.deleteUser);
 
 module.exports = router;
