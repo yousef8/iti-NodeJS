@@ -11,7 +11,7 @@ exports.getTodos = async function getTodos(req, res) {
       $match: { userId: req.userId, status: status || 'to-do' },
     },
     {
-      $limit: parseInt(limit, 10) || 100,
+      $limit: parseInt(limit, 10) || 10,
     },
     {
       $skip: parseInt(skip, 10) || 0,
