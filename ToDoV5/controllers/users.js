@@ -23,7 +23,11 @@ async function register(req, res, next) {
     return next(new MyError(err.message, 422));
   }
 
-  return res.status(201).json(user);
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: '1d',
+  });
+
+  return res.status(201).json({ user, token });
 }
 
 async function getUsers(req, res, next) {
