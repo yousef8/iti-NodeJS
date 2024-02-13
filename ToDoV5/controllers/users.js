@@ -79,7 +79,7 @@ async function editUser(req, res, next) {
   if (firstName) user.firstName = firstName;
   if (lastName) user.lastName = lastName;
   if (username) user.username = username;
-  if (password) user.password = password;
+  if (password) user.password = password.toString();
 
   const updatedUser = await asyncWrapper(user.save());
 
